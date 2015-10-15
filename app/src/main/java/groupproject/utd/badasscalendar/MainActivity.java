@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-int naruto = 50;
+int naruto2 = 50;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
