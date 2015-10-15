@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
                 int jo = 10;
                 int pop = 20;
-                String jonathan = "is the main";
+                String jonathan = "is the man";
 
             }
         });
