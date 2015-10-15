@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
 
 int jo = 100;
+                int pop = 20;
             }
         });
     }
