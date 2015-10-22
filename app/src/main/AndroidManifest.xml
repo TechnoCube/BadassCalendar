@@ -29,6 +29,11 @@
             android:theme="@style/FullscreenTheme"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".MonthlyView"
+            android:label="@string/title_activity_monthly_view"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>
