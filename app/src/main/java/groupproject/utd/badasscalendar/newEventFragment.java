@@ -9,10 +9,12 @@ import android.view.ViewGroup;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class newEventFragment extends Fragment {
+public class NewEventFragment extends Fragment {
 
-    public newEventFragment() {
+    public NewEventFragment() {
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
