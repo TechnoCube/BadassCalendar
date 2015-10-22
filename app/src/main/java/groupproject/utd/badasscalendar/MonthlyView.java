@@ -15,12 +15,22 @@ public class MonthlyView extends Activity implements CalendarView.OnDateChangeLi
     // Widget Variables
     private TextView monthlyEventTitle;
     private TextView monthlyEventDescription;
+    private CalendarView monthlyCalendar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.MonthlyView);
-        // TODO : Draw display, set display to current day
+        setContentView(R.layout.activity_monthly_view);
+
+        // Assign references to widgets
+        monthlyEventTitle = (TextView) findViewById(R.id.monthlyEventTitle);
+        monthlyEventDescription = (TextView) findViewById(R.id.monthlyEventDescription);
+        monthlyCalendar = (CalendarView) findViewById(R.id.monthlyCalendar);
+
+        // Setting listener
+        monthlyCalendar.setOnDateChangeListener(this);
+
+        // TODO : Set display to current day
     }
 
     @Override
