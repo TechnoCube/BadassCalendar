@@ -43,7 +43,7 @@
         android:layout_below="@+id/Location"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="setDate"
+        android:onClick="showDatePickerDialog"
         android:layout_marginTop="45dp" />
 
 
@@ -55,7 +55,18 @@
         android:layout_below="@+id/Date"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="setTime"
+        android:onClick="showTimePickerDialog"
         android:layout_marginTop="38dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tryoutb"
+        android:id="@+id/Tryoutb"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/Time"
+        android:layout_toEndOf="@+id/Time"
+        android:layout_marginBottom="57dp"
+        android:onClick="myMethod"/>
 
 </RelativeLayout>
