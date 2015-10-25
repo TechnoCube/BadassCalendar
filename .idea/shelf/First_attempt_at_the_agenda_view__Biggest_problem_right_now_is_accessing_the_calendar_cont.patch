@@ -1,0 +1,575 @@
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(date 1445364366000)
++++ app/src/main/AndroidManifest.xml	(revision )
+@@ -2,6 +2,9 @@
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     package="groupproject.utd.badasscalendar" >
+ 
++    <uses-permission android:name="android.permission.READ_CALENDAR" />
++    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
++
+     <application
+         android:allowBackup="true"
+         android:icon="@mipmap/ic_launcher"
+@@ -17,6 +20,12 @@
+ 
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
++        </activity>
++        <activity
++            android:name=".AgendaView"
++            android:configChanges="orientation|keyboardHidden|screenSize"
++            android:label="@string/title_activity_agenda_view"
++            android:theme="@style/FullscreenTheme" >
+         </activity>
+     </application>
+ 
+Index: app/src/main/java/groupproject/utd/badasscalendar/AgendaView.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/groupproject/utd/badasscalendar/AgendaView.java	(revision )
++++ app/src/main/java/groupproject/utd/badasscalendar/AgendaView.java	(revision )
+@@ -0,0 +1,214 @@
++package groupproject.utd.badasscalendar;
++
++import android.annotation.SuppressLint;
++import android.content.ContentResolver;
++import android.content.ContentUris;
++import android.database.Cursor;
++import android.net.Uri;
++import android.provider.CalendarContract;
++import android.support.v7.app.ActionBar;
++import android.support.v7.app.AppCompatActivity;
++import android.os.Bundle;
++import android.os.Handler;
++import android.view.MotionEvent;
++import android.view.View;
++import android.widget.ListView;
++import android.widget.SimpleCursorAdapter;
++
++import java.util.Calendar;
++
++/**
++ * An example full-screen activity that shows and hides the system UI (i.e.
++ * status bar and navigation/system bar) with user interaction.
++ */
++public class AgendaView extends AppCompatActivity {
++    /**
++     * Whether or not the system UI should be auto-hidden after
++     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
++     */
++    private static final boolean AUTO_HIDE = true;
++
++    /**
++     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
++     * user interaction before hiding the system UI.
++     */
++    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
++
++    /**
++     * Some older devices needs a small delay between UI widget updates
++     * and a change of the status and navigation bar.
++     */
++    private static final int UI_ANIMATION_DELAY = 300;
++
++    private View mContentView;
++    private View mControlsView;
++    private boolean mVisible;
++
++    // Set up query from calendar provider
++    // The event instance data along with the respective indices
++    public static final String[] INSTANCE_PROJECTION = new String[] {
++            CalendarContract.Instances.EVENT_ID,      // 0
++            CalendarContract.Instances.BEGIN,         // 1
++            CalendarContract.Instances.END,           // 2
++            CalendarContract.Instances.TITLE          // 3
++
++    };
++    private static final int PROJECTION_ID_INDEX = 0;
++    private static final int PROJECTION_BEGIN_INDEX = 1;
++    private static final int PROJECTION_END_INDEX = 2;
++    private static final int PROJECTION_TITLE_INDEX = 3;
++
++    // Cursor adapter parameters for loading the events
++    private String[] fromColumns = {CalendarContract.Instances.TITLE,
++            CalendarContract.Instances.BEGIN,
++            CalendarContract.Instances.END};
++    private int[] toViews = {R.id.event_name, R.id.start_time, R.id.end_time};
++
++    @Override
++    protected void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++
++        setContentView(R.layout.activity_agenda_view);
++
++        mVisible = true;
++
++        // Set time bounds for the query and create the URI builder
++        // Currently just searches a week out from current system time
++        Calendar currentTime = Calendar.getInstance();
++        long startMillis = currentTime.getTimeInMillis();
++        currentTime.add(Calendar.WEEK_OF_YEAR, 1);
++        long endMillis = currentTime.getTimeInMillis();
++        Uri.Builder builder = CalendarContract.Instances.CONTENT_URI.buildUpon();
++        ContentUris.appendId(builder, startMillis);
++        ContentUris.appendId(builder, endMillis);
++
++
++        // Cursor and content resolver for the event instance query
++        Cursor cur;
++        ContentResolver cr = getContentResolver();
++
++        // Submit the query
++        cur =  cr.query(builder.build(), INSTANCE_PROJECTION, null, null, null);
++
++        // Cursor adapter for moving the data from the cursor into the list view
++        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
++                R.layout.agenda_list_item, cur, fromColumns, toViews, 0);
++        ListView lv = (ListView)findViewById(R.id.listView);
++        lv.setAdapter(adapter);
++
++        // Set up the user interaction to manually show or hide the system UI.
++        mContentView.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View view) {
++                toggle();
++            }
++        });
++
++    }
++
++    @Override
++    protected void onPostCreate(Bundle savedInstanceState) {
++        super.onPostCreate(savedInstanceState);
++
++        // Trigger the initial hide() shortly after the activity has been
++        // created, to briefly hint to the user that UI controls
++        // are available.
++        delayedHide(100);
++    }
++
++    /**
++     * Touch listener to use for in-layout UI controls to delay hiding the
++     * system UI. This is to prevent the jarring behavior of controls going away
++     * while interacting with activity UI.
++     */
++    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
++        @Override
++        public boolean onTouch(View view, MotionEvent motionEvent) {
++            if (AUTO_HIDE) {
++                delayedHide(AUTO_HIDE_DELAY_MILLIS);
++            }
++            return false;
++        }
++    };
++
++    private void toggle() {
++        if (mVisible) {
++            hide();
++        } else {
++            show();
++        }
++    }
++
++    private void hide() {
++        // Hide UI first
++        ActionBar actionBar = getSupportActionBar();
++        if (actionBar != null) {
++            actionBar.hide();
++        }
++        mControlsView.setVisibility(View.GONE);
++        mVisible = false;
++
++        // Schedule a runnable to remove the status and navigation bar after a delay
++        mHideHandler.removeCallbacks(mShowPart2Runnable);
++        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
++    }
++
++    private final Runnable mHidePart2Runnable = new Runnable() {
++        @SuppressLint("InlinedApi")
++        @Override
++        public void run() {
++            // Delayed removal of status and navigation bar
++
++            // Note that some of these constants are new as of API 16 (Jelly Bean)
++            // and API 19 (KitKat). It is safe to use them, as they are inlined
++            // at compile-time and do nothing on earlier devices.
++            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
++                    | View.SYSTEM_UI_FLAG_FULLSCREEN
++                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
++                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
++                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
++                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
++        }
++    };
++
++    @SuppressLint("InlinedApi")
++    private void show() {
++        // Show the system bar
++        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
++                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
++        mVisible = true;
++
++        // Schedule a runnable to display UI elements after a delay
++        mHideHandler.removeCallbacks(mHidePart2Runnable);
++        mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
++    }
++
++    private final Runnable mShowPart2Runnable = new Runnable() {
++        @Override
++        public void run() {
++            // Delayed display of UI elements
++            ActionBar actionBar = getSupportActionBar();
++            if (actionBar != null) {
++                actionBar.show();
++            }
++            mControlsView.setVisibility(View.VISIBLE);
++        }
++    };
++
++    private final Handler mHideHandler = new Handler();
++    private final Runnable mHideRunnable = new Runnable() {
++        @Override
++        public void run() {
++            hide();
++        }
++    };
++
++    /**
++     * Schedules a call to hide() in [delay] milliseconds, canceling any
++     * previously scheduled calls.
++     */
++    private void delayedHide(int delayMillis) {
++        mHideHandler.removeCallbacks(mHideRunnable);
++        mHideHandler.postDelayed(mHideRunnable, delayMillis);
++    }
++}
+Index: app/src/main/res/layout/agenda_list_item.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/agenda_list_item.xml	(revision )
++++ app/src/main/res/layout/agenda_list_item.xml	(revision )
+@@ -0,0 +1,54 @@
++<?xml version="1.0" encoding="utf-8"?>
++<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:orientation="vertical" android:layout_width="match_parent"
++    android:layout_height="match_parent">
++
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:textAppearance="?android:attr/textAppearanceLarge"
++        android:text="Event Name"
++        android:id="@+id/event_name"
++        android:layout_alignParentTop="true"
++        android:layout_centerHorizontal="true" />
++
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:textAppearance="?android:attr/textAppearanceMedium"
++        android:text="Start: "
++        android:id="@+id/start_label"
++        android:layout_below="@+id/event_name"
++        android:layout_alignParentLeft="true"
++        android:layout_alignParentStart="true" />
++
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:textAppearance="?android:attr/textAppearanceMedium"
++        android:text="start time"
++        android:id="@+id/start_time"
++        android:layout_below="@+id/event_name"
++        android:layout_toRightOf="@+id/start_label"
++        android:layout_toEndOf="@+id/start_label" />
++
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:textAppearance="?android:attr/textAppearanceMedium"
++        android:text="End: "
++        android:id="@+id/end_time"
++        android:layout_alignTop="@+id/end_time"
++        android:layout_toLeftOf="@+id/end_time"
++        android:layout_toStartOf="@+id/end_time" />
++
++    <TextView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:textAppearance="?android:attr/textAppearanceMedium"
++        android:text="end time"
++        android:id="@+id/end_time"
++        android:layout_below="@+id/event_name"
++        android:layout_alignParentRight="true"
++        android:layout_alignParentEnd="true" />
++</RelativeLayout>
+\ No newline at end of file
+Index: app/src/main/res/values/styles.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/styles.xml	(date 1445364366000)
++++ app/src/main/res/values/styles.xml	(revision )
+@@ -14,4 +14,16 @@
+     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+ 
++    <style name="FullscreenTheme" parent="AppTheme">
++        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
++        <item name="android:windowActionBarOverlay">true</item>
++        <item name="android:windowBackground">@null</item>
++        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
++        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
++    </style>
++
++    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
++        <item name="android:background">@color/black_overlay</item>
++    </style>
++
+ </resources>
+Index: app/src/main/res/layout/activity_agenda_view.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_agenda_view.xml	(revision )
++++ app/src/main/res/layout/activity_agenda_view.xml	(revision )
+@@ -0,0 +1,12 @@
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context="groupproject.utd.badasscalendar.AgendaView">
++
++
++    <include layout="@layout/content_agenda_view" />
++
++
++
++
++</FrameLayout>
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(date 1445364366000)
++++ app/build.gradle	(revision )
+@@ -16,12 +16,16 @@
+             minifyEnabled false
+             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+         }
++        debug {
++            debuggable true;
+-    }
+-}
++        }
++    }
++}
+ 
+ dependencies {
+     compile fileTree(dir: 'libs', include: ['*.jar'])
+     testCompile 'junit:junit:4.12'
+-    compile 'com.android.support:appcompat-v7:23.0.1'
+-    compile 'com.android.support:design:23.0.1'
++    compile 'com.android.support:appcompat-v7:23.1.0'
++    compile 'com.android.support:design:23.1.0'
++    compile 'com.android.support:support-v4:23.1.0'
+ }
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(date 1445364366000)
++++ .idea/misc.xml	(revision )
+@@ -37,7 +37,7 @@
+     <ConfirmationsSetting value="0" id="Add" />
+     <ConfirmationsSetting value="0" id="Remove" />
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+\ No newline at end of file
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(date 1445364366000)
++++ app/src/main/res/values/strings.xml	(revision )
+@@ -1,4 +1,8 @@
+ <resources>
+     <string name="app_name">BadassCalendar</string>
+     <string name="action_settings">Settings</string>
++
++    <string name="title_activity_agenda_view">AgendaView</string>
++    <string name="dummy_button">Dummy Button</string>
++    <string name="dummy_content">DUMMY\nCONTENT</string>
+ </resources>
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/gradle.xml	(date 1445364366000)
++++ .idea/gradle.xml	(revision )
+@@ -6,7 +6,7 @@
+         <option name="distributionType" value="LOCAL" />
+         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+         <option name="gradleHome" value="C:\Program Files\Android\Android Studio\gradle\gradle-2.4" />
+-        <option name="gradleJvm" value="1.8" />
++        <option name="gradleJvm" value="1.7" />
+         <option name="modules">
+           <set>
+             <option value="$PROJECT_DIR$" />
+\ No newline at end of file
+Index: app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/colors.xml	(date 1445364366000)
++++ app/src/main/res/values/colors.xml	(revision )
+@@ -3,4 +3,6 @@
+     <color name="colorPrimary">#3F51B5</color>
+     <color name="colorPrimaryDark">#303F9F</color>
+     <color name="colorAccent">#FF4081</color>
++
++    <color name="black_overlay">#66000000</color>
+ </resources>
+Index: app/src/main/res/values/attrs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/attrs.xml	(revision )
++++ app/src/main/res/values/attrs.xml	(revision )
+@@ -0,0 +1,12 @@
++<resources>
++
++    <!-- Declare custom theme attributes that allow changing which styles are
++         used for button bars depending on the API level.
++         ?android:attr/buttonBarStyle is new as of API 11 so this is
++         necessary to support previous API levels. -->
++    <declare-styleable name="ButtonBarContainerTheme">
++        <attr name="metaButtonBarStyle" format="reference" />
++        <attr name="metaButtonBarButtonStyle" format="reference" />
++    </declare-styleable>
++
++</resources>
+Index: app/src/main/java/groupproject/utd/badasscalendar/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/groupproject/utd/badasscalendar/MainActivity.java	(date 1445364366000)
++++ app/src/main/java/groupproject/utd/badasscalendar/MainActivity.java	(revision )
+@@ -1,6 +1,8 @@
+ package groupproject.utd.badasscalendar;
+ 
++import android.content.Intent;
+ import android.os.Bundle;
++import android.provider.CalendarContract;
+ import android.support.design.widget.FloatingActionButton;
+ import android.support.design.widget.Snackbar;
+ import android.support.v7.app.AppCompatActivity;
+@@ -22,17 +24,16 @@
+         fab.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+-                        .setAction("Action", null).show();
+-                string latin = "Lorem Ipsum";
+-                int jo = 10;
+-                int pop = 20;
+-                String jonathan = "is the main";
++                // Launches agenda view on button click
++                Intent myIntent = new Intent(MainActivity.this, AgendaView.class);
++                MainActivity.this.startActivity(myIntent);
+ 
+             }
+         });
++
++
+     }
+-int naruto = 50;
++
+     @Override
+     public boolean onCreateOptionsMenu(Menu menu) {
+         // Inflate the menu; this adds items to the action bar if it is present.
+Index: app/src/main/res/layout/content_agenda_view.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/content_agenda_view.xml	(revision )
++++ app/src/main/res/layout/content_agenda_view.xml	(revision )
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="utf-8"?>
++<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:showIn="@layout/activity_agenda_view">
++
++    <ListView
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:id="@+id/listView"
++        android:layout_alignParentTop="true"
++        android:layout_centerHorizontal="true" />
++</RelativeLayout>
+\ No newline at end of file
+Index: app/app.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/app.iml	(date 1445364366000)
++++ app/app.iml	(revision )
+@@ -71,9 +71,10 @@
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dependency-cache" />
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dex" />
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dex-cache" />
+-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/jars" />
+-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/design/23.0.1/jars" />
+-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars" />
++      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.0/jars" />
++      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/design/23.1.0/jars" />
++      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.1.0/jars" />
++      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.0/jars" />
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jacoco" />
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/javaResources" />
+@@ -87,12 +88,14 @@
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
+       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
+       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
++      <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
+     </content>
+     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+-    <orderEntry type="library" exported="" name="support-v4-23.0.1" level="project" />
+-    <orderEntry type="library" exported="" name="design-23.0.1" level="project" />
+-    <orderEntry type="library" exported="" name="appcompat-v7-23.0.1" level="project" />
+-    <orderEntry type="library" exported="" name="support-annotations-23.0.1" level="project" />
++    <orderEntry type="library" exported="" name="recyclerview-v7-23.1.0" level="project" />
++    <orderEntry type="library" exported="" name="support-annotations-23.1.0" level="project" />
++    <orderEntry type="library" exported="" name="appcompat-v7-23.1.0" level="project" />
++    <orderEntry type="library" exported="" name="design-23.1.0" level="project" />
++    <orderEntry type="library" exported="" name="support-v4-23.1.0" level="project" />
+   </component>
+ </module>
+\ No newline at end of file
