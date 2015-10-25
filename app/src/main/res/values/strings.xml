@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">BadassCalendar</string>
     <string name="action_settings">Settings</string>
-
     <string name="title_activity_agenda_view">AgendaView</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_weekly_view2">WeeklyView</string>
+    <string name="title_activity_weekly_view">WeeklyView</string>
 </resources>
