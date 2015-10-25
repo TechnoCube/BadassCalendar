@@ -7,4 +7,12 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_weekly_view2">WeeklyView</string>
     <string name="title_activity_weekly_view">WeeklyView</string>
+    <string name="Sunday">Sun</string>
+    <string name="Monday">Mon</string>
+    <string name="Tuesday">Tue</string>
+    <string name="Wednesday">Wed</string>
+    <string name="Thursday">Thu</string>
+    <string name="Friday">FRI</string>
+    <string name="Saturday">SAT</string>
+    <string name="add_event">Add Event</string>
 </resources>
