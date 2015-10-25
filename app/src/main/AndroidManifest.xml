@@ -34,6 +34,11 @@
             android:label="@string/title_activity_weekly_view"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity
+            android:name=".MonthlyView"
+            android:label="@string/title_activity_monthly_view"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>
