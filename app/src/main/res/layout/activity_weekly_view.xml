@@ -67,7 +67,9 @@
             android:layout_width="wrap_content"
             android:layout_height="70dp"
             android:text="@string/Sunday"
-            android:id="@+id/satButton" />
+            android:id="@+id/satButton"
+            android:clickable="false"
+            android:onClick="sunButton" />
 
         <Button
             android:layout_width="wrap_content"

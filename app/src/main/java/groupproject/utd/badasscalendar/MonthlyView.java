@@ -19,7 +19,7 @@ public class MonthlyView extends Activity implements CalendarView.OnDateChangeLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.MonthlyView);
+       // setContentView(R.layout.MonthlyView);
         // TODO : Draw display, set display to current day
     }
 
