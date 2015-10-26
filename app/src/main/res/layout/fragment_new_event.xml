@@ -38,8 +38,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/date"
-        android:id="@+id/Date"
+        android:text="Start Date"
+        android:id="@+id/Start_Date"
         android:layout_below="@+id/Location"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -50,9 +50,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/time"
-        android:id="@+id/Time"
-        android:layout_below="@+id/Date"
+        android:text="Start Time"
+        android:id="@+id/Start_Time"
+        android:layout_below="@+id/Start_Date"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:onClick="showTimePickerDialog"
@@ -64,7 +64,28 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/textView"
-        android:layout_below="@+id/Time"
+        android:layout_below="@+id/Start_Time"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/End_Date"
+        android:id="@+id/End_Date"
+        android:layout_alignTop="@+id/Start_Date"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:onClick="showDatePickerDialog1"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/End_Time"
+        android:id="@+id/End_Time"
+        android:layout_alignTop="@+id/Start_Time"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:onClick="showTimePickerDialog1"/>
+
 
 </RelativeLayout>
