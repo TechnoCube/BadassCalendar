@@ -1,6 +1,8 @@
 package groupproject.utd.badasscalendar;
 
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.AdapterView;
 import android.widget.CalendarView;
@@ -17,15 +19,18 @@ import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Button;
 import android.widget.Toast;
+import android.util.Log;
+
 
 import org.w3c.dom.Text;
 
 
-public class WeeklyView extends Activity implements AdapterView.OnItemSelectedListener{
+public class WeeklyView extends Activity {
+
+    private static final String TAG = WeeklyView.class.getSimpleName();
 
     //Drop down list
     Spinner dropDownlist;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,20 +43,51 @@ public class WeeklyView extends Activity implements AdapterView.OnItemSelectedLi
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.dropDownlist, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dropDownlist.setAdapter(adapter);
+        dropDownlist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position > 0) {
+                    //AgendaView
+                    if (position == 1) {
+                        Intent i = new Intent(WeeklyView.this, MainActivity.class);
+                        startActivity(i);
+                        Log.d(TAG, "Position is 0");
+                    }
+                    //DailyView
+                    if (position == 2) {
+                        Intent i = new Intent(WeeklyView.this, MainActivity.class);
+                        startActivity(i);
+                        Log.d(TAG, "Position is 1");
+                    }
+                    //WeeklyView
+                    if (position == 3) {
+                        Intent i = new Intent(WeeklyView.this, WeeklyView.class);
+                        startActivity(i);
+                        Log.d(TAG, "Position is 2");
+                    }
+                    //MonthlyView
+                    if (position == 4) {
+                        Intent i = new Intent(WeeklyView.this, MainActivity.class);
+                        startActivity(i);
+                        Log.d(TAG, "Position is 3");
+                    }
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Weekly View", Toast.LENGTH_LONG).show();
+                }
 
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
     }
 
-    //Drop down list
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        TextView myText = (TextView) view;
-        Toast.makeText(this, "You Selected", Toast.LENGTH_SHORT).show();
-    }
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
 
-    }
 
     //Sunday's button
     public void sunButton(View v){
