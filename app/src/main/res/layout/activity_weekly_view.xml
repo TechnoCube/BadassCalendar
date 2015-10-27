@@ -75,37 +75,43 @@
             android:layout_width="wrap_content"
             android:layout_height="70dp"
             android:text="@string/Monday"
-            android:id="@+id/monButton" />
+            android:id="@+id/monButton"
+            android:onClick="monButton" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="70dp"
             android:text="@string/Tuesday"
-            android:id="@+id/tueButton" />
+            android:id="@+id/tueButton"
+            android:onClick="tueButton" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="70dp"
             android:text="@string/Wednesday"
-            android:id="@+id/wedButton" />
+            android:id="@+id/wedButton"
+            android:onClick="wedButton" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="70dp"
             android:text="@string/Thursday"
-            android:id="@+id/thuButton" />
+            android:id="@+id/thuButton"
+            android:onClick="thuButton" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="70dp"
             android:text="@string/Friday"
-            android:id="@+id/friButton" />
+            android:id="@+id/friButton"
+            android:onClick="friButton" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="70dp"
             android:text="@string/Saturday"
-            android:id="@+id/satButton" />
+            android:id="@+id/satButton"
+            android:onClick="satButton" />
     </LinearLayout>
 
     <Spinner

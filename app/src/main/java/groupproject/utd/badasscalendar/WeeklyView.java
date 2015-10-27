@@ -33,6 +33,7 @@ public class WeeklyView extends Activity implements AdapterView.OnItemSelectedLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weekly_view);
 
+        //Drop down list
         dropDownlist = (Spinner) findViewById(R.id.Pull_down);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.dropDownlist, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -41,20 +42,69 @@ public class WeeklyView extends Activity implements AdapterView.OnItemSelectedLi
 
     }
 
+    //Drop down list
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        TextView myText = (TextView) view; 
+        TextView myText = (TextView) view;
         Toast.makeText(this, "You Selected", Toast.LENGTH_SHORT).show();
     }
-
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+    //Sunday's button
     public void sunButton(View v){
+        /*
+         Open daily view of that day
+         */
         Button button = (Button) v;
-        ((Button) v).setText("click");
+        //((Button) v).setText("click");
     }
+
+    //Monday's button
+    public void monButton(View v){
+        /*
+        Open daily view of that day
+        */
+    }
+
+    //Tuesday's button
+    public void tueButton(View v){
+        /*
+        Open daily view of that day
+        */
+    }
+
+    //Wednesday's button
+    public void wedButton(View v){
+        /*
+        Open daily view of that day
+        */
+    }
+
+    //Thursday's button
+    public void thuButton(View v){
+        /*
+        Open daily view of that day
+        */
+    }
+
+    //Friday's button
+    public void friButton(View v){
+        /*
+        Open daily view of that day
+        */
+    }
+
+    //Saturday's button
+    public void satButton(View v){
+        /*
+        Open daily view of that day
+        */
+    }
+
+
 }
 
 

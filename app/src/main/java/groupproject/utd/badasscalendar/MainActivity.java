@@ -31,7 +31,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 //       .setAction("Action", null).show();
-                startActivity(new Intent(MainActivity.this,MonthlyView.class));
+
+                // Henry_TEST: The email icon will take you to a different activity
+                startActivity(new Intent(MainActivity.this,WeeklyView.class));
 
             }
         });

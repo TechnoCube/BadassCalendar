@@ -16,9 +16,9 @@
     <string name="Saturday">SAT</string>
     <string name="add_event">Add Event</string>
     <string-array name="dropDownlist">
-        <item>Daily View</item>
-        <item>Monthly View</item>
         <item>Agenda View</item>
-
+        <item>Daily View</item>
+        <item>Weekly View</item>
+        <item>Monthly View</item>
     </string-array>
 </resources>
