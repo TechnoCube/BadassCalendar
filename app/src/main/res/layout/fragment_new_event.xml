@@ -9,7 +9,6 @@
     tools:context="groupproject.utd.badasscalendar.NewEventFragment"
     tools:showIn="@layout/activity_new_event">
 
-
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,6 +19,14 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:hint="Event Name" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+    </LinearLayout>
 
     <EditText
         android:layout_width="wrap_content"
