@@ -17,7 +17,7 @@ abstract class EventManager {
  * May instantiate elsewhere if needed.
  * Warning: Uses deprecated date methods.
  */
-public class Event {
+class Event {
     private Date eventTime;
     private String eventTitle;
     private String eventDescription;
@@ -234,6 +234,9 @@ public class Event {
 
         // Set Minute
         newTime.setMinutes(Integer.parseInt(newMinute));
+
+        // Set Seconds to zero
+        newTime.setSeconds(0);
 
         eventTime = newTime;
     }
