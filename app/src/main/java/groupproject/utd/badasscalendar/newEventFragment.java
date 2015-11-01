@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class NewEventFragment extends Fragment {
+public class newEventFragment extends Fragment {
 
-    public NewEventFragment() {
+    public newEventFragment() {
     }
 
 
