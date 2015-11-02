@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">BadassCalendar</string>
     <string name="action_settings">Settings</string>
+<<<<<<< HEAD
     <string name="title_activity_new_event">newEvent</string>
     <string name="eventName">eventName</string>
     <string name="month">month</string>
@@ -12,4 +13,14 @@
     <string name="tryoutb">tryoutb</string>
     <string name="End_Date">End Date</string>
     <string name="End_Time">End Time</string>
+=======
+
+    <string name="title_activity_agenda_view">AgendaView</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+>>>>>>> 25f1153... First attempt at the agenda view. Biggest problem right now is accessing the calendar content provider on the emulator.
+
+    <string name="title_activity_agenda_view">AgendaView</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
