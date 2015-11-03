@@ -50,12 +50,13 @@ public class AgendaView extends AppCompatActivity {
             CalendarContract.Instances.EVENT_ID,      // 0
             CalendarContract.Instances.BEGIN,         // 1
             CalendarContract.Instances.END,           // 2
-            CalendarContract.Instances.TITLE          // 3
+            CalendarContract.Instances.TITLE,         // 3
+            CalendarContract.Instances._ID            // 4
 
     };
     private static final int PROJECTION_ID_INDEX = 0;
     private static final int PROJECTION_BEGIN_INDEX = 1;
-    private static final int PROJECTION_END_INDEX = 2;
+    private static final int PROJECTION_END_INDEX =  2;
     private static final int PROJECTION_TITLE_INDEX = 3;
 
     // Cursor adapter parameters for loading the events
@@ -96,14 +97,6 @@ public class AgendaView extends AppCompatActivity {
         ListView lv = (ListView)findViewById(R.id.listView);
         lv.setAdapter(adapter);
 
-        // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
-
     }
 
     @Override
@@ -113,7 +106,7 @@ public class AgendaView extends AppCompatActivity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        delayedHide(100);
+        //delayedHide(100);
     }
 
     /**
