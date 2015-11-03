@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                 // There seems to be a missing newEvent.class in this revision
-//                Intent i = new Intent(MainActivity.this, newEvent.class);
-//                startActivity(i);
+                Intent i = new Intent(MainActivity.this, newEvent.class);
+                startActivity(i);
 
             }
         });

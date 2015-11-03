@@ -94,7 +94,7 @@ public class AgendaView extends AppCompatActivity {
         // Cursor adapter for moving the data from the cursor into the list view
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
                 R.layout.agenda_list_item, cur, fromColumns, toViews, 0);
-        ListView lv = (ListView)findViewById(R.id.listView);
+        ListView lv = (ListView)findViewById(R.id.agenda_items);
         lv.setAdapter(adapter);
 
     }

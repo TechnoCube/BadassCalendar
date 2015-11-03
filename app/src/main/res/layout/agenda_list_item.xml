@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="End: "
-        android:id="@+id/end_time"
+        android:id="@+id/end_label"
         android:layout_alignTop="@+id/end_time"
         android:layout_toLeftOf="@+id/end_time"
         android:layout_toStartOf="@+id/end_time" />
