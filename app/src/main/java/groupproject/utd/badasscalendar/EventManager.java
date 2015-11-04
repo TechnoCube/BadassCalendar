@@ -2,6 +2,7 @@ package groupproject.utd.badasscalendar;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -15,21 +16,23 @@ import java.util.ListIterator;
  * Utilizes a linked list to store events when the app runs,
  * and writes to a file when the app closes.
  * DO NOT INSTANTIATE, ONLY USE STATIC METHODS.
+ * IMPORT: android.content.Context
  */
 abstract class EventManager {
     static private LinkedList<Event> eventData; // Linked list of events
-    final static private String EVENT_FILE = new String ("BADCAL.DAT"); // Filename
+    final static private String EVENT_FILENAME = new String ("BADCAL.DAT"); // Filename
 
-    // Load File Method; returns true if read succeeded
-    // MUST BE CALLED BEFORE ANY EVENTMANAGER OPERATIONS
-    static public boolean loadFile() {
+    // Load File Method; returns true if read succeeded or generated empty list
+    // MUST BE CALLED BEFORE ANY EVENT MANAGER OPERATIONS
+    // USE: EventManager.loadFile(new File(Context.getFilesDir(), EventManager.EVENT_FILENAME))
+    static public boolean loadFile(File localFile) {
         eventData = new LinkedList<Event>(); // Empty event list
         String eventLine; // File read string
         Event readEvent; // Read event object
         boolean operationSuccess = true; // File operation flag
 
         // Attempt file read operations
-        try (BufferedReader eventBuffer = new BufferedReader(new FileReader(EVENT_FILE))){
+        try (BufferedReader eventBuffer = new BufferedReader(new FileReader(localFile))){
             // Read from file and append to linked list
             while((eventLine = eventBuffer.readLine()) != null) {
                 // Get Start Time
@@ -67,12 +70,13 @@ abstract class EventManager {
 
     // Save File Method; returns true if write succeeded
     // MUST BE CALLED BEFORE CLOSING APPLICATION
-    static public boolean saveFile() {
+    // USE: EventManager.saveFile(new File(Context.getFilesDir(), EventManager.EVENT_FILENAME))
+    static public boolean saveFile(File localFile) {
         Event writeEvent; // Write event object
         boolean operationSuccess = true; // File operation flag
 
         // Attempt file write operations
-        try (BufferedWriter eventBuffer = new BufferedWriter(new FileWriter(EVENT_FILE))){
+        try (BufferedWriter eventBuffer = new BufferedWriter(new FileWriter(localFile))){
             // Obtain iterator
             ListIterator<Event> eventIterator = eventData.listIterator();
 
@@ -104,6 +108,15 @@ abstract class EventManager {
         }
 
         return operationSuccess;
+    }
+
+    // Check if Empty Method; returns true if manager has no events
+    static public boolean isEmpty() {
+        boolean emptyFlag = true; // Flag to signal empty list
+        // Check if list exists
+        if (eventData != null)
+            emptyFlag = eventData.isEmpty();
+        return emptyFlag;
     }
 
     // Add Event Method; returns true if event was added
@@ -204,24 +217,27 @@ class Event {
     }
 
     // Get Start Year String Method
+    @SuppressWarnings("deprecation")
     public String getStartYear() {
-        // Use deprecated date method to obtain year
+        // Obtain year
         Integer numericYear;
         numericYear = eventStart.getYear() + 1900;
         return numericYear.toString();
     }
 
     // Get End Year String Method
+    @SuppressWarnings("deprecation")
     public String getEndYear() {
-        // Use deprecated date method to obtain year
+        // Obtain year
         Integer numericYear;
         numericYear = eventEnd.getYear() + 1900;
         return numericYear.toString();
     }
 
     // Get Start Month String Method
+    @SuppressWarnings("deprecation")
     public String getStartMonth() {
-        // Use deprecated date method to obtain month
+        // Obtain month
         int numericMonth;
         String stringMonth;
         numericMonth = eventStart.getMonth();
@@ -273,8 +289,9 @@ class Event {
     }
 
     // Get End Month String Method
+    @SuppressWarnings("deprecation")
     public String getEndMonth() {
-        // Use deprecated date method to obtain month
+        // Obtain month
         int numericMonth;
         String stringMonth;
         numericMonth = eventEnd.getMonth();
@@ -326,48 +343,54 @@ class Event {
     }
 
     // Get Start Day String Method
+    @SuppressWarnings("deprecation")
     public String getStartDay() {
-        // Use deprecated date method to obtain day
+        // Obtain day
         Integer numericDay;
         numericDay = eventStart.getDate();
         return numericDay.toString();
     }
 
     // Get Start Day String Method
+    @SuppressWarnings("deprecation")
     public String getEndDay() {
-        // Use deprecated date method to obtain day
+        // Obtain day
         Integer numericDay;
         numericDay = eventEnd.getDate();
         return numericDay.toString();
     }
 
     // Get Start Hour String Method
+    @SuppressWarnings("deprecation")
     public String getStartHour() {
-        // Use deprecated date method to obtain hour
+        // Obtain hour
         Integer numericHour;
         numericHour = eventStart.getHours();
         return numericHour.toString();
     }
 
     // Get End Hour String Method
+    @SuppressWarnings("deprecation")
     public String getEndHour() {
-        // Use deprecated date method to obtain hour
+        // Obtain hour
         Integer numericHour;
         numericHour = eventEnd.getHours();
         return numericHour.toString();
     }
 
     // Get Minute String Method
+    @SuppressWarnings("deprecation")
     public String getStartMinute() {
-        // Use deprecated date method to obtain minute
+        // Obtain minute
         Integer numericMinute;
         numericMinute = eventStart.getMinutes();
         return numericMinute.toString();
     }
 
     // Get Minute String Method
+    @SuppressWarnings("deprecation")
     public String getEndMinute() {
-        // Use deprecated date method to obtain minute
+        // Obtain minute
         Integer numericMinute;
         numericMinute = eventEnd.getMinutes();
         return numericMinute.toString();
@@ -399,8 +422,9 @@ class Event {
     }
 
     // Set Start Time with Strings Method
+    @SuppressWarnings("deprecation")
     public void setStartTime(String newYear, String newMonth, String newDay, String newHour, String newMinute) {
-        // Use deprecated methods to construct new date object
+        // Construct new date object
         Date newStart = new Date();
 
         // Set Year
@@ -468,8 +492,9 @@ class Event {
     }
 
     // Set Start Time with Strings Method
+    @SuppressWarnings("deprecation")
     public void setEndTime(String newYear, String newMonth, String newDay, String newHour, String newMinute) {
-        // Use deprecated methods to construct new date object
+        // Construct new date object
         Date newEnd = new Date();
 
         // Set Year
