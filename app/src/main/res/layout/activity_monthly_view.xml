@@ -35,6 +35,14 @@
 
         <!-- Placeholder Text -->
         <TextView
+            android:id="@+id/monthlyEventTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1 January 1970; 00:00 - 00:00"
+            android:textSize="30sp"/>
+
+        <!-- Placeholder Text -->
+        <TextView
             android:id="@+id/monthlyEventDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -14,6 +14,7 @@ public class MonthlyView extends Activity implements CalendarView.OnDateChangeLi
 
     // Widget Variables
     private TextView monthlyEventTitle;
+    private TextView monthlyEventTime;
     private TextView monthlyEventDescription;
     private CalendarView monthlyCalendar;
 
@@ -24,6 +25,7 @@ public class MonthlyView extends Activity implements CalendarView.OnDateChangeLi
 
         // Assign references to widgets
         monthlyEventTitle = (TextView) findViewById(R.id.monthlyEventTitle);
+        monthlyEventTime = (TextView) findViewById(R.id.monthlyEventTime);
         monthlyEventDescription = (TextView) findViewById(R.id.monthlyEventDescription);
         monthlyCalendar = (CalendarView) findViewById(R.id.monthlyCalendar);
 

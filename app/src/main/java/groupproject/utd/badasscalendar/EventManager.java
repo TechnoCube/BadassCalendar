@@ -1,7 +1,14 @@
 package groupproject.utd.badasscalendar;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 /**
  * Emergency alternative to SQL Database or Content Manager.
@@ -11,15 +18,92 @@ import java.util.LinkedList;
  */
 abstract class EventManager {
     static private LinkedList<Event> eventData; // Linked list of events
+    final static private String EVENT_FILE = new String ("BADCAL.DAT"); // Filename
 
     // Load File Method; returns true if read succeeded
+    // MUST BE CALLED BEFORE ANY EVENTMANAGER OPERATIONS
     static public boolean loadFile() {
-        // TODO: Open file, read into linked list, close file
+        eventData = new LinkedList<Event>(); // Empty event list
+        String eventLine; // File read string
+        Event readEvent; // Read event object
+        boolean operationSuccess = true; // File operation flag
+
+        // Attempt file read operations
+        try (BufferedReader eventBuffer = new BufferedReader(new FileReader(EVENT_FILE))){
+            // Read from file and append to linked list
+            while((eventLine = eventBuffer.readLine()) != null) {
+                // Get Start Time
+                readEvent = new Event();
+                readEvent.setStartTime(new Date(Long.parseLong(eventLine)));
+
+                // Get End Time
+                eventLine = eventBuffer.readLine();
+                readEvent.setEndTime(new Date(Long.parseLong(eventLine)));
+
+                // Get Title
+                eventLine = eventBuffer.readLine();
+                readEvent.setTitle(eventLine);
+
+                // Get Description
+                eventLine = eventBuffer.readLine();
+                readEvent.setTitle(eventLine);
+
+                // Add completed event to list
+                eventData.add(readEvent);
+            }
+        }
+        catch (FileNotFoundException excFNF) {
+            // File does not exist, empty event list
+            eventData.clear();
+        }
+        catch (IOException excIO) {
+            // Unable to read file, set event list to null
+            eventData = null;
+            operationSuccess = false;
+        }
+
+        return operationSuccess;
     }
 
     // Save File Method; returns true if write succeeded
+    // MUST BE CALLED BEFORE CLOSING APPLICATION
     static public boolean saveFile() {
-        // TODO: Open file, read from linked list, close file
+        Event writeEvent; // Write event object
+        boolean operationSuccess = true; // File operation flag
+
+        // Attempt file write operations
+        try (BufferedWriter eventBuffer = new BufferedWriter(new FileWriter(EVENT_FILE))){
+            // Obtain iterator
+            ListIterator<Event> eventIterator = eventData.listIterator();
+
+            // Write to file
+            while (eventIterator.hasNext()) {
+                // Obtain element using iterator
+                writeEvent = eventIterator.next();
+
+                // Set Start Time
+                eventBuffer.write(Long.toString(writeEvent.getStartTime().getTime()));
+                eventBuffer.newLine();
+
+                // Set End Time
+                eventBuffer.write(Long.toString(writeEvent.getEndTime().getTime()));
+                eventBuffer.newLine();
+
+                // Set Title
+                eventBuffer.write(writeEvent.getTitle());
+                eventBuffer.newLine();
+
+                // set Description
+                eventBuffer.write(writeEvent.getDescription());
+                eventBuffer.newLine();
+            }
+        }
+        catch (IOException excIO) {
+            // Unable to write to file
+            operationSuccess = false;
+        }
+
+        return operationSuccess;
     }
 
     // Add Event Method; returns true if event was added
@@ -54,10 +138,10 @@ abstract class EventManager {
  * Warning: Uses deprecated date methods.
  */
 class Event {
-    private Date eventStart;
-    private Date eventEnd;
-    private String eventTitle;
-    private String eventDescription;
+    private Date eventStart; // Event start time
+    private Date eventEnd; // event end time
+    private String eventTitle; // Event title
+    private String eventDescription; // Event description
 
     // Default Constructor
     public Event() {
