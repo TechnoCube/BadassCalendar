@@ -1,6 +1,7 @@
 package groupproject.utd.badasscalendar;
 
 import java.util.Date;
+import java.util.LinkedList;
 
 /**
  * Emergency alternative to SQL Database or Content Manager.
@@ -9,7 +10,42 @@ import java.util.Date;
  * DO NOT INSTANTIATE, ONLY USE STATIC METHODS.
  */
 abstract class EventManager {
+    static private LinkedList<Event> eventData; // Linked list of events
 
+    // Load File Method; returns true if read succeeded
+    static public boolean loadFile() {
+        // TODO: Open file, read into linked list, close file
+    }
+
+    // Save File Method; returns true if write succeeded
+    static public boolean saveFile() {
+        // TODO: Open file, read from linked list, close file
+    }
+
+    // Add Event Method; returns true if event was added
+    static public boolean addEvent(Event newEvent) {
+        // TODO: Check for conflicts, add event
+    }
+
+    // Remove Event Method; returns true if event was removed
+    static public boolean removeEvent(Event newEvent) {
+        // TODO: Check if event exists, remove event
+    }
+
+    // Get Event After Time Method; returns first event at or after given date
+    static public Event getAfterTime(Date time) {
+        // TODO: Find event, return event
+    }
+
+    // Get Event Before Time Method; returns first event at or before given date
+    static public Event getBeforeTime(Date time) {
+        // TODO: Find event, return event
+    }
+
+    // Get Events Between Times Method; returns all events between given dates
+    static public LinkedList<Event> getBetweenTimes (Date begin, Date end) {
+        // TODO: Find events, return events
+    }
 }
 
 /**
@@ -18,14 +54,16 @@ abstract class EventManager {
  * Warning: Uses deprecated date methods.
  */
 class Event {
-    private Date eventTime;
+    private Date eventStart;
+    private Date eventEnd;
     private String eventTitle;
     private String eventDescription;
 
     // Default Constructor
     public Event() {
         // Set Date and String objects to default values
-        eventTime = new Date();
+        eventStart = new Date();
+        eventEnd = new Date();
         eventTitle = new String();
         eventDescription = new String();
     }
@@ -33,59 +71,76 @@ class Event {
     // Copy Constructor
     public Event(Event original) {
         // Copy values from given Event object
-        this.eventTime = original.eventTime;
+        this.eventStart = original.eventStart;
+        this.eventEnd = original.eventEnd;
         this.eventTitle = original.eventTitle;
         this.eventDescription = original.eventDescription;
     }
 
-    // Initial Date Object Complete Constructor
-    public Event(Date initialTime, String initialTitle, String initialDescription) {
+    // Initial Data Complete Constructor
+    public Event(Date initialStart, Date initialEnd, String initialTitle, String initialDescription) {
         // Assign all values to fields
-        eventTime = initialTime;
+        eventStart = initialStart;
+        eventEnd = initialEnd;
         eventTitle = initialTitle;
         eventDescription = initialDescription;
     }
 
-    // Initial Date Object Partial Constructor
-    public Event(Date initialTime) {
+    // Initial Times Object Partial Constructor
+    public Event(Date initialStart, Date initialEnd) {
         // Call complete constructor using defaults for missing values
-        this(initialTime, new String(), new String());
+        this(initialStart, initialEnd, new String(), new String());
     }
 
     // Initial Title and Description Partial Constructor
     public Event(String initialTitle, String initialDescription) {
         // Call complete constructor using defaults for missing values
-        this(new Date(), initialTitle, initialDescription);
+        this(new Date(), new Date(), initialTitle, initialDescription);
     }
 
-    // Initial Date as Strings Constructor
+    // Initial Start Time as Strings Constructor
     public Event(String year, String month, String day, String hour, String minute) {
         // Call set method and use defaults for title and description
-        setTime(year, month, day, hour, minute);
+        setStartTime(year, month, day, hour, minute);
+        eventEnd = new Date();
         eventTitle = new String();
         eventDescription = new String();
     }
 
-    // Get Date Method
-    public Date getTime() {
-        // Return date object
-        return eventTime;
+    // Get Start Time Method
+    public Date getStartTime() {
+        // Return start date object
+        return eventStart;
     }
 
-    // Get Year String Method
-    public String getYear() {
+    // Get End Time Method
+    public Date getEndTime() {
+        // Return end date object
+        return eventEnd;
+    }
+
+    // Get Start Year String Method
+    public String getStartYear() {
         // Use deprecated date method to obtain year
         Integer numericYear;
-        numericYear = eventTime.getYear() + 1900;
+        numericYear = eventStart.getYear() + 1900;
         return numericYear.toString();
     }
 
-    // Get Month String Method
-    public String getMonth() {
+    // Get End Year String Method
+    public String getEndYear() {
+        // Use deprecated date method to obtain year
+        Integer numericYear;
+        numericYear = eventEnd.getYear() + 1900;
+        return numericYear.toString();
+    }
+
+    // Get Start Month String Method
+    public String getStartMonth() {
         // Use deprecated date method to obtain month
         int numericMonth;
         String stringMonth;
-        numericMonth = eventTime.getMonth();
+        numericMonth = eventStart.getMonth();
 
         // Switch to set month value
         switch(numericMonth) {
@@ -133,27 +188,104 @@ class Event {
         return stringMonth;
     }
 
-    // Get Day String Method
-    public String getDay() {
+    // Get End Month String Method
+    public String getEndMonth() {
+        // Use deprecated date method to obtain month
+        int numericMonth;
+        String stringMonth;
+        numericMonth = eventEnd.getMonth();
+
+        // Switch to set month value
+        switch(numericMonth) {
+            case 0:
+                stringMonth = "January";
+                break;
+            case 1:
+                stringMonth = "February";
+                break;
+            case 2:
+                stringMonth = "March";
+                break;
+            case 3:
+                stringMonth = "April";
+                break;
+            case 4:
+                stringMonth = "May";
+                break;
+            case 5:
+                stringMonth = "June";
+                break;
+            case 6:
+                stringMonth = "July";
+                break;
+            case 7:
+                stringMonth = "August";
+                break;
+            case 8:
+                stringMonth = "September";
+                break;
+            case 9:
+                stringMonth = "October";
+                break;
+            case 10:
+                stringMonth = "November";
+                break;
+            case 11:
+                stringMonth = "December";
+                break;
+            default:
+                stringMonth = new String();
+                break;
+        }
+
+        return stringMonth;
+    }
+
+    // Get Start Day String Method
+    public String getStartDay() {
         // Use deprecated date method to obtain day
         Integer numericDay;
-        numericDay = eventTime.getDate();
+        numericDay = eventStart.getDate();
         return numericDay.toString();
     }
 
-    // Get Hour String Method
-    public String getHour() {
+    // Get Start Day String Method
+    public String getEndDay() {
+        // Use deprecated date method to obtain day
+        Integer numericDay;
+        numericDay = eventEnd.getDate();
+        return numericDay.toString();
+    }
+
+    // Get Start Hour String Method
+    public String getStartHour() {
         // Use deprecated date method to obtain hour
         Integer numericHour;
-        numericHour = eventTime.getHours();
+        numericHour = eventStart.getHours();
+        return numericHour.toString();
+    }
+
+    // Get End Hour String Method
+    public String getEndHour() {
+        // Use deprecated date method to obtain hour
+        Integer numericHour;
+        numericHour = eventEnd.getHours();
         return numericHour.toString();
     }
 
     // Get Minute String Method
-    public String getMinute() {
+    public String getStartMinute() {
         // Use deprecated date method to obtain minute
         Integer numericMinute;
-        numericMinute = eventTime.getMinutes();
+        numericMinute = eventStart.getMinutes();
+        return numericMinute.toString();
+    }
+
+    // Get Minute String Method
+    public String getEndMinute() {
+        // Use deprecated date method to obtain minute
+        Integer numericMinute;
+        numericMinute = eventEnd.getMinutes();
         return numericMinute.toString();
     }
 
@@ -169,76 +301,149 @@ class Event {
         return eventDescription;
     }
 
-    // Set Date Object Method
-    public void setTime(Date newTime) {
-        // Set event date
-        eventTime = newTime;
+    // Set Start and End Times Method
+    public void setTimes(Date newStart, Date newEnd) {
+        // Set start and end dates
+        eventStart = newStart;
+        eventEnd = newEnd;
     }
 
-    // Set Date with Strings Method
-    public void setTime(String newYear, String newMonth, String newDay, String newHour, String newMinute) {
+    // Set Start Time with Object Method
+    public void setStartTime(Date newStart) {
+        // Set event date
+        eventStart = newStart;
+    }
+
+    // Set Start Time with Strings Method
+    public void setStartTime(String newYear, String newMonth, String newDay, String newHour, String newMinute) {
         // Use deprecated methods to construct new date object
-        Date newTime = new Date();
+        Date newStart = new Date();
 
         // Set Year
-        newTime.setYear(Integer.parseInt(newYear) + 1900);
+        newStart.setYear(Integer.parseInt(newYear) + 1900);
 
         // Set Month
         switch (newMonth) {
             case "January":
-                newTime.setMonth(0);
+                newStart.setMonth(0);
                 break;
             case "February":
-                newTime.setMonth(1);
+                newStart.setMonth(1);
                 break;
             case "March":
-                newTime.setMonth(2);
+                newStart.setMonth(2);
                 break;
             case "April":
-                newTime.setMonth(3);
+                newStart.setMonth(3);
                 break;
             case "May":
-                newTime.setMonth(4);
+                newStart.setMonth(4);
                 break;
             case "June":
-                newTime.setMonth(5);
+                newStart.setMonth(5);
                 break;
             case "July":
-                newTime.setMonth(6);
+                newStart.setMonth(6);
                 break;
             case "August":
-                newTime.setMonth(7);
+                newStart.setMonth(7);
                 break;
             case "September":
-                newTime.setMonth(8);
+                newStart.setMonth(8);
                 break;
             case "October":
-                newTime.setMonth(9);
+                newStart.setMonth(9);
                 break;
             case "November":
-                newTime.setMonth(10);
+                newStart.setMonth(10);
                 break;
             case "December":
-                newTime.setMonth(11);
+                newStart.setMonth(11);
                 break;
             default:
-                newTime.setMonth(-1);
+                newStart.setMonth(-1);
                 break;
         }
 
         // Set Day
-        newTime.setDate(Integer.parseInt(newDay));
+        newStart.setDate(Integer.parseInt(newDay));
 
         // Set Hour
-        newTime.setHours(Integer.parseInt(newHour));
+        newStart.setHours(Integer.parseInt(newHour));
 
         // Set Minute
-        newTime.setMinutes(Integer.parseInt(newMinute));
+        newStart.setMinutes(Integer.parseInt(newMinute));
 
-        // Set Seconds to zero
-        newTime.setSeconds(0);
+        eventStart = newStart;
+    }
 
-        eventTime = newTime;
+    // Set Start Time with Object Method
+    public void setEndTime(Date newEnd) {
+        // Set event date
+        eventStart = newEnd;
+    }
+
+    // Set Start Time with Strings Method
+    public void setEndTime(String newYear, String newMonth, String newDay, String newHour, String newMinute) {
+        // Use deprecated methods to construct new date object
+        Date newEnd = new Date();
+
+        // Set Year
+        newEnd.setYear(Integer.parseInt(newYear) + 1900);
+
+        // Set Month
+        switch (newMonth) {
+            case "January":
+                newEnd.setMonth(0);
+                break;
+            case "February":
+                newEnd.setMonth(1);
+                break;
+            case "March":
+                newEnd.setMonth(2);
+                break;
+            case "April":
+                newEnd.setMonth(3);
+                break;
+            case "May":
+                newEnd.setMonth(4);
+                break;
+            case "June":
+                newEnd.setMonth(5);
+                break;
+            case "July":
+                newEnd.setMonth(6);
+                break;
+            case "August":
+                newEnd.setMonth(7);
+                break;
+            case "September":
+                newEnd.setMonth(8);
+                break;
+            case "October":
+                newEnd.setMonth(9);
+                break;
+            case "November":
+                newEnd.setMonth(10);
+                break;
+            case "December":
+                newEnd.setMonth(11);
+                break;
+            default:
+                newEnd.setMonth(-1);
+                break;
+        }
+
+        // Set Day
+        newEnd.setDate(Integer.parseInt(newDay));
+
+        // Set Hour
+        newEnd.setHours(Integer.parseInt(newHour));
+
+        // Set Minute
+        newEnd.setMinutes(Integer.parseInt(newMinute));
+
+        eventStart = newEnd;
     }
 
     // Set Event Title Method
