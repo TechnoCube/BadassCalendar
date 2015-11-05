@@ -20,7 +20,7 @@ import java.util.ListIterator;
  */
 abstract class EventManager {
     static private LinkedList<Event> eventData; // Linked list of events
-    final static private String EVENT_FILENAME = new String ("BADCAL.DAT"); // Filename
+    final static public String EVENT_FILENAME = new String ("BADCAL.DAT"); // Filename
 
     // Load File Method; returns true if read succeeded or generated empty list
     // MUST BE CALLED BEFORE ANY EVENT MANAGER OPERATIONS
@@ -110,7 +110,7 @@ abstract class EventManager {
         return operationSuccess;
     }
 
-    // Check if Empty Method; returns true if manager has no events
+    // Check if Empty Method; returns true if manager contains no events
     static public boolean isEmpty() {
         boolean emptyFlag = true; // Flag to signal empty list
         // Check if list exists
@@ -122,6 +122,55 @@ abstract class EventManager {
     // Add Event Method; returns true if event was added
     static public boolean addEvent(Event newEvent) {
         // TODO: Check for conflicts, add event
+        ListIterator<Event> eventIterator = eventData.listIterator(); // List iterator of events
+        Event nextEvent = null, prevEvent = null, tempEvent = null; // Events for comparisons
+        long newStartMillis = newEvent.getStartTime().getTime(); // New Event's start time
+        long newEndMillis = newEvent.getEndTime().getTime(); // New Event's end time
+        boolean operationSuccess = true; // Add operation success flag
+
+        // Check if list is empty
+        if (eventData.isEmpty())
+            eventData.add(newEvent); // Empty list, just add event
+        else {
+            // Find where to insert element
+            while (eventIterator.hasNext()) {
+                // Obtain event from iterator
+                tempEvent = eventIterator.next();
+
+                // Check for where existing events begin in relation to new event
+                if (newStartMillis < tempEvent.getStartTime().getTime()) {
+                    // Found next event, check for previous event and break
+                    nextEvent = tempEvent;
+                    tempEvent = eventIterator.previous();
+                    if (eventIterator.hasPrevious())
+                        prevEvent = eventIterator.previous();
+                    break;
+                }
+            }
+            if (nextEvent == null) {
+                // New event should be last, check for overlap
+                if (newStartMillis < eventData.getLast().getEndTime().getTime())
+                    operationSuccess = false;
+                else
+                    eventData.addLast(newEvent);
+            }
+            else if (prevEvent == null) {
+                // New event should be first, check for overlap
+                if (newEndMillis > eventData.getFirst().getStartTime().getTime())
+                    operationSuccess = false;
+                else
+                    eventData.addFirst(newEvent);
+            }
+            else {
+                // Event is between next and previous, check for overlaps
+                if (newStartMillis < prevEvent.getEndTime().getTime() || newEndMillis > nextEvent.getStartTime().getTime())
+                    operationSuccess = false;
+                else
+                    eventData.add(eventData.indexOf(nextEvent), newEvent);
+            }
+        }
+
+        return operationSuccess;
     }
 
     // Remove Event Method; returns true if event was removed
@@ -148,7 +197,6 @@ abstract class EventManager {
 /**
  * Event object to be stored in EventManager's linked list.
  * May instantiate elsewhere if needed.
- * Warning: Uses deprecated date methods.
  */
 class Event {
     private Date eventStart; // Event start time
