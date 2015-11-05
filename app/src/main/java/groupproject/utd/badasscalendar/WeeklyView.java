@@ -1,3 +1,8 @@
+/*
+    Coder: Herny Kim
+    Date : Nov 4, 2015
+*/
+
 package groupproject.utd.badasscalendar;
 
 
