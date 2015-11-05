@@ -30,10 +30,12 @@ abstract class EventManager {
         String eventLine; // File read string
         Event readEvent; // Read event object
         boolean operationSuccess = true; // File operation flag
+        BufferedReader eventBuffer = null; // Buffer for file reader
 
         // Attempt file read operations
-        try (BufferedReader eventBuffer = new BufferedReader(new FileReader(localFile))){
+        try {
             // Read from file and append to linked list
+            eventBuffer = new BufferedReader(new FileReader(localFile));
             while((eventLine = eventBuffer.readLine()) != null) {
                 // Get Start Time
                 readEvent = new Event();
@@ -58,11 +60,26 @@ abstract class EventManager {
         catch (FileNotFoundException excFNF) {
             // File does not exist, empty event list
             eventData.clear();
+            try {
+                if (eventBuffer != null)
+                    eventBuffer.close();
+            }
+            catch (IOException excClose){
+                // Unable to handle close
+            }
         }
         catch (IOException excIO) {
             // Unable to read file, set event list to null
             eventData = null;
             operationSuccess = false;
+
+            try {
+                if (eventBuffer != null)
+                    eventBuffer.close();
+            }
+            catch (IOException excClose){
+                // Unable to handle close
+            }
         }
 
         return operationSuccess;
@@ -74,9 +91,11 @@ abstract class EventManager {
     static public boolean saveFile(File localFile) {
         Event writeEvent; // Write event object
         boolean operationSuccess = true; // File operation flag
+        BufferedWriter eventBuffer = null; // Buffer to contain file writer
 
         // Attempt file write operations
-        try (BufferedWriter eventBuffer = new BufferedWriter(new FileWriter(localFile))){
+        try {
+            eventBuffer = new BufferedWriter(new FileWriter(localFile));
             // Obtain iterator
             ListIterator<Event> eventIterator = eventData.listIterator();
 
@@ -105,6 +124,14 @@ abstract class EventManager {
         catch (IOException excIO) {
             // Unable to write to file
             operationSuccess = false;
+
+            try {
+                if (eventBuffer != null)
+                    eventBuffer.close();
+            }
+            catch (IOException excClose) {
+                // Unable to handle close
+            }
         }
 
         return operationSuccess;
@@ -121,7 +148,6 @@ abstract class EventManager {
 
     // Add Event Method; returns true if event was added
     static public boolean addEvent(Event newEvent) {
-        // TODO: Check for conflicts, add event
         ListIterator<Event> eventIterator = eventData.listIterator(); // List iterator of events
         Event nextEvent = null, prevEvent = null, tempEvent = null; // Events for comparisons
         long newStartMillis = newEvent.getStartTime().getTime(); // New Event's start time
@@ -174,23 +200,77 @@ abstract class EventManager {
     }
 
     // Remove Event Method; returns true if event was removed
-    static public boolean removeEvent(Event newEvent) {
-        // TODO: Check if event exists, remove event
+    static public boolean removeEvent(Event deleteEvent) {
+        // Remove event with list method
+        return eventData.remove(deleteEvent);
     }
 
-    // Get Event After Time Method; returns first event at or after given date
+    // Get Event After Time Method; returns first event at or after given date, or null for no date after
     static public Event getAfterTime(Date time) {
-        // TODO: Find event, return event
+        ListIterator<Event> eventIterator = eventData.listIterator(); // List iterator of events
+        Event afterEvent; // Event after given time
+        long afterTimeMillis = time.getTime(); // Time of given date object
+
+        // Find event after time
+        while (eventIterator.hasNext()) {
+            // Get next and check if at right date
+            afterEvent = eventIterator.next();
+            if (afterTimeMillis <= afterEvent.getStartTime().getTime())
+                return afterEvent;
+        }
+
+        // Unable to find event
+        return null;
     }
 
     // Get Event Before Time Method; returns first event at or before given date
     static public Event getBeforeTime(Date time) {
-        // TODO: Find event, return event
+        ListIterator<Event> eventIterator = eventData.listIterator(eventData.size()); // List iterator of events
+        Event beforeEvent; // Event before given time
+        long beforeTimeMillis = time.getTime(); // Time of given date object
+
+        // Find event before time
+        while (eventIterator.hasPrevious()) {
+            // Get next and check if at right date
+            beforeEvent = eventIterator.previous();
+            if (beforeTimeMillis <= beforeEvent.getStartTime().getTime())
+                return beforeEvent;
+        }
+
+        // Unable to find event
+        return null;
     }
 
     // Get Events Between Times Method; returns all events between given dates
-    static public LinkedList<Event> getBetweenTimes (Date begin, Date end) {
-        // TODO: Find events, return events
+    static public LinkedList<Event> getBetweenTimes (Date start, Date end) {
+        LinkedList<Event> eventList = new LinkedList<Event>(); // List to populate and return
+        ListIterator<Event> eventIterator = eventData.listIterator();
+        Event tempEvent; // Temporary event to compare against
+        long startTimeMillis = start.getTime(); // Time of given start date
+        long endTimeMillis = end.getTime(); // time of given end date
+
+        // Find events from list
+        while (eventIterator.hasNext()) {
+            // Get event and check if it is between boundaries
+            tempEvent = eventIterator.next();
+            if (startTimeMillis < tempEvent.getStartTime().getTime()) {
+                // Found first element, populate and break
+                eventList.add(tempEvent);
+                break;
+            }
+        }
+        // Find rest of elements to populate
+        while (eventIterator.hasNext()) {
+            tempEvent = eventIterator.next();
+
+            // Check if beyond end date yet
+            if (endTimeMillis >= tempEvent.getStartTime().getTime())
+                eventList.add(tempEvent);
+            else
+                break;
+        }
+
+        return eventList;
     }
 }
 
