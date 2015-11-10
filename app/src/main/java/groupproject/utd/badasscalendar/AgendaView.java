@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
@@ -90,13 +92,14 @@ public class AgendaView extends AppCompatActivity {
 
         // Submit the query
         cur =  cr.query(builder.build(), INSTANCE_PROJECTION, null, null, null);
+        cur.moveToFirst();
+        Log.i("AgendaView", DatabaseUtils.dumpCursorToString(cur));
 
         // Cursor adapter for moving the data from the cursor into the list view
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
                 R.layout.agenda_list_item, cur, fromColumns, toViews, 0);
         ListView lv = (ListView)findViewById(R.id.agenda_items);
         lv.setAdapter(adapter);
-
     }
 
     @Override
